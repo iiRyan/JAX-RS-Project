@@ -14,10 +14,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
 
 public class MonthService {
     private static final Logger LOGGER = LogManager.getLogger(MonthService.class);
@@ -33,7 +35,7 @@ public class MonthService {
         database = mongoClient.getDatabase("myExpenses");
         collection = database.getCollection("monthlyBudget");
 
-        ObjectMapper mapper = new ObjectMapper();
+        mapper = new ObjectMapper();
         // Register the custom deserializer for ObjectId
         SimpleModule mod = new SimpleModule("ObjectIdModule", new Version(1, 0, 0, null, null, null));
         mod.addDeserializer(ObjectId.class, new ObjectIdDeserializer()); // Add custom deserializer
@@ -42,7 +44,9 @@ public class MonthService {
         LOGGER.info("initialized MongoDB Client DB name LOGGER {}" + database.getName());
     }
 
-    // Star insertion operation.
+    ////////////////////////////
+    // Month operations.
+
     public Month insertMonth(Month theMonth) {
 
         Document doc = new Document("month", theMonth.getMonth());
@@ -50,16 +54,36 @@ public class MonthService {
         return theMonth;
     }
 
-    public void insertIncome(String theMonth, Income theIncome) {
+    public boolean deleteMonth(String id) {
+        try {
+            DeleteResult result = collection.deleteOne(new Document("_id", new ObjectId(id)));
+            if(result.getDeletedCount() > 0){
+                return true;
+            }
+            
+        } catch (MongoException e) {
+            System.out.println("Error ==> " + e);
+        }
+        return false;
+    }
+    ////////////////////////////
+    // Income Operations
+
+    public Income insertIncome(String theMonth, Income theIncome) {
 
         Document doc = new Document("title", theIncome.getTitle())
-                .append("amount", theIncome.getAmount());
+                .append("amount", theIncome.getAmount())
+                .append("id", new ObjectId());
 
         collection.updateOne(
                 new Document("month", new String(theMonth)),
                 new Document("$push", new Document("incomes", doc)));
+
+        return theIncome;
     }
 
+    ////////////////////////////
+    // Expenses Operations.
     public void insertExpense(String theMonth, Expense theExpense) {
 
         Document doc = new Document("title", theExpense.getTitle())
@@ -73,10 +97,7 @@ public class MonthService {
                 new Document("$push", new Document("expenses", doc)));
     }
 
-    // End insert operation
-
     public Month findAll(String theMonth) {
-
         FindIterable<Document> records = collection.find(new Document("month", theMonth));
 
         Month monthFinancial = null;
@@ -87,7 +108,7 @@ public class MonthService {
             }
         } catch (JsonProcessingException e) {
             System.out.println("Error ==> " + e.getMessage());
-           
+
         }
         // If no documents were found, return an empty object instead of null
         return monthFinancial != null ? monthFinancial : new Month();
@@ -99,7 +120,7 @@ public class MonthService {
         Month theMonth = new Month();
         Expense theExpense = new Expense("STC Biles", 2565465, "Basic Expenses", "STCPay", "unPaid");
 
-        String month = "today";
+        String month = "September";
         Income theIncome = new Income("Salary", 10000);
         // theMonth.setMonth(month);
         // service.insertMonth(theMonth);

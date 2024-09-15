@@ -1,8 +1,11 @@
 package com.expensetracker.rest.model;
 
+import org.bson.types.ObjectId;
 
 public class Income {
 
+    
+    private String _id;
     private String title;
     private int amount;
 
@@ -14,6 +17,15 @@ public class Income {
         this.amount = amount;
     }
 
+    public String getId() {
+        return _id;
+    }
+
+    public void setId(ObjectId _id) {
+        if (_id != null) {
+            this._id = _id.toHexString();
+        }
+    }
 
     public String getTitle() {
         return title;
@@ -33,7 +45,7 @@ public class Income {
 
     @Override
     public String toString() {
-        return "Income [title=" + title + ", amount=" + amount + "]";
+        return "Income [id=" + _id + ", title=" + title + ", amount=" + amount + "]";
     }
-    
+   
 }

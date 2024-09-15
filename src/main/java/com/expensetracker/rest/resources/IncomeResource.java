@@ -2,6 +2,7 @@ package com.expensetracker.rest.resources;
 
 import java.util.List;
 import com.expensetracker.rest.service.IncomeService;
+import com.expensetracker.rest.service.MonthService;
 import com.expensetracker.rest.model.Income;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -15,23 +16,19 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-@Path("/income")
+@Path("/incomes")
 public class IncomeResource {
 
-    IncomeService service = new IncomeService();
+       MonthService service = new MonthService();
 
-    @GET
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Income> getIncomes() {
-        return service.getIncomes();
-    }
 
+    
+    @Path("{month}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertIncome(Income income) {
-        Income resIncome = service.insertIncome(income);
+    public Response insertIncome(@PathParam("month") String month,Income income) {
+        Income resIncome = service.insertIncome(month,income);
         return Response.status(Status.CREATED)
                 .entity(resIncome)
                 .build();
@@ -48,12 +45,12 @@ public class IncomeResource {
                 .build();
     }
 
-    @DELETE
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}")
-    public Response deleteIncome(@PathParam("id") String _id) {
-        service.deleteIncome(_id);
-        return Response.status(Response.Status.OK).build();
-    }
+    // @DELETE
+    // @Consumes(MediaType.APPLICATION_JSON)
+    // @Produces(MediaType.APPLICATION_JSON)
+    // @Path("/{id}")
+    // public Response deleteIncome(@PathParam("id") String _id) {
+    //     service.deleteIncome(_id);
+    //     return Response.status(Response.Status.OK).build();
+    // }
 }

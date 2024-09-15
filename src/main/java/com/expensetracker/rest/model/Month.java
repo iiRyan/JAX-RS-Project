@@ -5,11 +5,9 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 public class Month {
 
     @JsonProperty("_id")
-    
     private String id;
     private String month;
     private List<Income> incomes;
@@ -33,7 +31,6 @@ public class Month {
         if (id != null) {
             this.id = id.toHexString();
         }
-
     }
 
     public List<Income> getIncomes() {

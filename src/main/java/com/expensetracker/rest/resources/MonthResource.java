@@ -4,6 +4,7 @@ import com.expensetracker.rest.model.Month;
 import com.expensetracker.rest.service.MonthService;
 
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -13,7 +14,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-@Path("/budgets")
+@Path("/months")
 public class MonthResource {
     MonthService service = new MonthService();
 
@@ -21,11 +22,11 @@ public class MonthResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Month findAll(@PathParam("month") String month) {
-        System.out.println("Enter the get method " + month);
-        Month monthFinancial = service.findAll(month);
-
-        return monthFinancial;
+    public Response findAll(@PathParam("month") String theMonth) {
+        Month month = service.findAll(theMonth);
+        return Response.status(Response.Status.OK)
+        .entity(month)
+        .build();
     }
 
     @POST
@@ -36,5 +37,17 @@ public class MonthResource {
         return Response.status(Status.CREATED)
         .entity(month)
         .build();
+    }
+
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public Response deleteMonth(@PathParam("id")String id){
+       boolean isDeleted = service.deleteMonth(id);
+        if(isDeleted){
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();    
     }
 }
