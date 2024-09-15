@@ -8,12 +8,10 @@ import org.bson.types.ObjectId;
 import com.expensetracker.rest.db.MongoDBClient;
 import com.expensetracker.rest.model.Expense;
 import com.expensetracker.rest.model.Income;
-import com.expensetracker.rest.model.MonthFinancial;
+import com.expensetracker.rest.model.Month;
 import com.expensetracker.rest.model.ObjectIdDeserializer;
-import com.expensetracker.rest.model.ObjectIdSerializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.client.FindIterable;
@@ -21,26 +19,35 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-public class MonthFinancialService {
-    private static final Logger LOGGER = LogManager.getLogger(MonthFinancialService.class);
+public class MonthService {
+    private static final Logger LOGGER = LogManager.getLogger(MonthService.class);
 
     private MongoClient mongoClient;
     private MongoDatabase database;
     private MongoCollection<Document> collection;
+    private ObjectMapper mapper;
 
-    public MonthFinancialService() {
+    public MonthService() {
 
         mongoClient = MongoDBClient.INSTANCE.getMongoClient();
         database = mongoClient.getDatabase("myExpenses");
         collection = database.getCollection("monthlyBudget");
+
+        ObjectMapper mapper = new ObjectMapper();
+        // Register the custom deserializer for ObjectId
+        SimpleModule mod = new SimpleModule("ObjectIdModule", new Version(1, 0, 0, null, null, null));
+        mod.addDeserializer(ObjectId.class, new ObjectIdDeserializer()); // Add custom deserializer
+        mapper.registerModule(mod);
+
         LOGGER.info("initialized MongoDB Client DB name LOGGER {}" + database.getName());
     }
 
     // Star insertion operation.
-    public void insertMonth(MonthFinancial monthFinancial) {
+    public Month insertMonth(Month theMonth) {
 
-        Document doc = new Document("month", monthFinancial.getMonth());
+        Document doc = new Document("month", theMonth.getMonth());
         collection.insertOne(doc);
+        return theMonth;
     }
 
     public void insertIncome(String theMonth, Income theIncome) {
@@ -68,39 +75,28 @@ public class MonthFinancialService {
 
     // End insert operation
 
-    public MonthFinancial findAll(String theMonth) {
+    public Month findAll(String theMonth) {
 
         FindIterable<Document> records = collection.find(new Document("month", theMonth));
-        MonthFinancial listOfFinancial = new MonthFinancial();
 
-        ObjectMapper mapper = new ObjectMapper();
-        // Register the custom deserializer for ObjectId
-        SimpleModule mod = new SimpleModule("ObjectIdModule", new Version(1, 0, 0, null, null, null));
-        mod.addDeserializer(ObjectId.class, new ObjectIdDeserializer()); // Add custom deserializer
-        mapper.registerModule(mod);
-
-        MonthFinancial object = null;
-        for (Document doc : records) {
-            try {
-                
-                System.out.println(doc.toJson());
-                // Here we Serialize POJO into JSON.
-                object = mapper.readValue(doc.toJson(), MonthFinancial.class);
-
-            } catch (JsonProcessingException e) {
-
-                e.printStackTrace();
+        Month monthFinancial = null;
+        try {
+            for (Document doc : records) {
+                // Deserialize each Document to a MonthFinancial object
+                monthFinancial = mapper.readValue(doc.toJson(), Month.class);
             }
-
+        } catch (JsonProcessingException e) {
+            System.out.println("Error ==> " + e.getMessage());
+           
         }
-
-        return object;
+        // If no documents were found, return an empty object instead of null
+        return monthFinancial != null ? monthFinancial : new Month();
     }
 
     public static void main(String[] args) {
-        MonthFinancialService service = new MonthFinancialService();
+        MonthService service = new MonthService();
 
-        MonthFinancial theMonth = new MonthFinancial();
+        Month theMonth = new Month();
         Expense theExpense = new Expense("STC Biles", 2565465, "Basic Expenses", "STCPay", "unPaid");
 
         String month = "today";

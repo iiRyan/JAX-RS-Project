@@ -4,10 +4,9 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-public class MonthFinancial {
+
+public class Month {
 
     @JsonProperty("_id")
     
@@ -16,10 +15,10 @@ public class MonthFinancial {
     private List<Income> incomes;
     private List<Expense> expenses;
 
-    public MonthFinancial() {
+    public Month() {
     }
 
-    public MonthFinancial(String month, List<Income> incomes, List<Expense> expenses) {
+    public Month(String month, List<Income> incomes, List<Expense> expenses) {
         this.month = month;
         this.incomes = incomes;
         this.expenses = expenses;
@@ -63,7 +62,7 @@ public class MonthFinancial {
 
     @Override
     public String toString() {
-        return "MonthFinancial [id=" + id + ", month=" + month + ", incomes=" + incomes + ", expenses=" + expenses
+        return "Month [id=" + id + ", month=" + month + ", incomes=" + incomes + ", expenses=" + expenses
                 + "]";
     }
 
