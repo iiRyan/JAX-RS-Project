@@ -4,9 +4,7 @@ import java.util.*;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.expensetracker.rest.db.MongoDBClient;
 import com.expensetracker.rest.exception.MissingFieldException;
 import com.expensetracker.rest.model.Expense;
@@ -25,7 +23,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 
 public class IncomeService {
-    private static final Logger LOGGER = LogManager.getLogger(IncomeService.class);
+       private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Income.class);
+
     private MongoClient mongoClient;
     private MongoDatabase database;
     private MongoCollection<Document> collection;

@@ -1,9 +1,10 @@
 package com.expensetracker.rest.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.expensetracker.rest.db.MongoDBClient;
 import com.expensetracker.rest.model.Expense;
@@ -22,7 +23,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 
 public class MonthService {
-    private static final Logger LOGGER = LogManager.getLogger(MonthService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MonthService.class);
 
     private MongoClient mongoClient;
     private MongoDatabase database;

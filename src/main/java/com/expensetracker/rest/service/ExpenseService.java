@@ -2,15 +2,15 @@ package com.expensetracker.rest.service;
 
 import java.util.*;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import org.bson.types.ObjectId;
+import org.slf4j.LoggerFactory;
 
 import com.expensetracker.rest.db.MongoDBClient;
 import com.expensetracker.rest.exception.MissingFieldException;
 import com.expensetracker.rest.model.Expense;
+import com.expensetracker.rest.model.Income;
 import com.expensetracker.rest.model.ObjectIdDeserializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
@@ -29,7 +29,7 @@ import com.mongodb.client.result.DeleteResult;
 the data received by the Resource.
 */
 public class ExpenseService {
-    private static final Logger LOGGER = LogManager.getLogger(ExpenseService.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ExpenseService.class);
 
     private MongoClient mongoClient;
     private MongoDatabase database;
@@ -50,7 +50,7 @@ public class ExpenseService {
         if (expense.getCategory() == null || expense.getCategory().isEmpty()) {
             throw new MissingFieldException("Category is missing or null");
         }
-        
+
         Document doc = new Document("title", expense.getTitle())
                 .append("amount", expense.getAmount())
                 .append("category", expense.getCategory());
@@ -92,10 +92,10 @@ public class ExpenseService {
             LOGGER.error("Unable to delete due to an error: {}" + me);
         }
     }
+
     public static void main(String[] args) {
         ExpenseService service = new ExpenseService();
 
         service.getExpenses();
     }
 }
-
