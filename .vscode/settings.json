@@ -1,0 +1,9 @@
+{
+  "wca.enable": false,
+  "cSpell.words": [
+    "expensetracker",
+    "Helloworld",
+    "jongo"
+],
+  "java.configuration.updateBuildConfiguration": "automatic"
+}

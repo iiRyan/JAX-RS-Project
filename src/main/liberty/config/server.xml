@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="new server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>jakartaee-10.0</feature>
+        <feature>microProfile-6.0</feature>
+    </featureManager>
+
+    
+    <basicRegistry id="basic" realm="BasicRealm">
+       
+    </basicRegistry>
+
+    <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="9080"
+                  httpsPort="9443" />
+
+    <!-- Automatically expand WAR files and EAR files -->
+    <applicationManager autoExpand="true"/>
+
+    <!-- Configures the application on a specified context root -->
+    <webApplication contextRoot="/expenses-tracker" location="expenses-tracker.war" />
+
+     <!-- Handle /expenses endpoint -->
+    <cors domain="/expenses-tracker/api/expenses"
+      allowedOrigins="http://localhost:3000"
+      allowedMethods="GET,POST,DELETE,OPTIONS"
+      allowCredentials="true"
+      allowedHeaders="Content-Type, Accept"
+      maxAge="3600"/>
+    <!-- Handle /income endpoint -->
+      <cors domain="/expenses-tracker/api/income"
+      allowedOrigins="http://localhost:3000"
+      allowedMethods="GET,POST,DELETE,OPTIONS"
+      allowCredentials="true"
+      allowedHeaders="Content-Type, Accept"
+      maxAge="3600"/>
+
+<httpOptions removeServerHeader="true"/>
+    <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
+    <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+
+    <library id="log4jConfig">
+        <folder dir="{/Users/rayan/projects/expenses-tracker/target/liberty/wlp/usr/servers/defaultServer/log4j2.xml}" scanInterval="5s" />
+  </library>
+</server>
