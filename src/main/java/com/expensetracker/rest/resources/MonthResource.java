@@ -1,5 +1,7 @@
 package com.expensetracker.rest.resources;
 
+import java.util.List;
+
 import com.expensetracker.rest.model.Month;
 import com.expensetracker.rest.service.MonthService;
 
@@ -17,6 +19,18 @@ import jakarta.ws.rs.core.Response.Status;
 @Path("/months")
 public class MonthResource {
     MonthService service = new MonthService();
+
+
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMonths(){
+        List<Month> monthsList = service.getMonths();
+        return Response.status(Response.Status.OK)
+        .entity(monthsList)
+        .build();
+    }
+
 
     @Path("{month}")
     @GET

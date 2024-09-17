@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 
 public class Expense {
 
+    private String _id;
     private String title;
     private int amount;
     private String category;
@@ -23,6 +24,17 @@ public class Expense {
         this.status = status;
     }
 
+
+    public String getId() {
+        return _id;
+    }
+
+    public void setId(ObjectId _id) {
+        if (_id != null) {
+            this._id = _id.toHexString();
+        }
+    }
+   
     public String getTitle() {
         return title;
     }
@@ -65,8 +77,10 @@ public class Expense {
 
     @Override
     public String toString() {
-        return "Expense [title=" + title + ", amount=" + amount + ", category=" + category + ", bank=" + bank
-                + ", status=" + status + "]";
+        return "Expense [_id=" + _id + ", title=" + title + ", amount=" + amount + ", category=" + category + ", bank="
+                + bank + ", status=" + status + "]";
     }
+
+   
 
 }

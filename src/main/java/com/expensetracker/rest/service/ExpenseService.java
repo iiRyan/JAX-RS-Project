@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.expensetracker.rest.db.MongoDBClient;
 import com.expensetracker.rest.exception.MissingFieldException;
 import com.expensetracker.rest.model.Expense;
-import com.expensetracker.rest.model.Income;
 import com.expensetracker.rest.model.ObjectIdDeserializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;

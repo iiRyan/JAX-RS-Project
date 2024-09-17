@@ -1,5 +1,7 @@
 package com.expensetracker.rest.service;
 
+import java.util.List;
+import java.util.ArrayList;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -42,11 +44,29 @@ public class MonthService {
         mod.addDeserializer(ObjectId.class, new ObjectIdDeserializer()); // Add custom deserializer
         mapper.registerModule(mod);
 
-        LOGGER.info("initialized MongoDB Client DB name LOGGER {}" + database.getName());
+        LOGGER.info("initialized MongoDB Client " + database.getName());
     }
 
     ////////////////////////////
     // Month operations.
+
+    public List<Month> getMonths(){
+        LOGGER.info("fetching months...");
+        FindIterable<Document> months = collection.find();
+        List<Month> monthsList = new ArrayList<>();
+
+        for (Document doc : months) {
+            try {
+                Month month = mapper.readValue(doc.toJson(), Month.class);
+                monthsList.add(month);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                LOGGER.error("Error occurred when parsing the object " + e);
+            }
+        }
+
+        return monthsList;
+    }
 
     public Month insertMonth(Month theMonth) {
 
@@ -85,17 +105,21 @@ public class MonthService {
 
     ////////////////////////////
     // Expenses Operations.
-    public void insertExpense(String theMonth, Expense theExpense) {
+
+    public Expense insertExpense(String theMonth, Expense theExpense) {
 
         Document doc = new Document("title", theExpense.getTitle())
                 .append("amount", theExpense.getAmount())
                 .append("category", theExpense.getCategory())
                 .append("status", theExpense.getStatus())
-                .append("bank", theExpense.getBank());
+                .append("bank", theExpense.getBank())
+                .append("id", new ObjectId());
 
         collection.updateOne(
                 new Document("month", new String(theMonth)),
                 new Document("$push", new Document("expenses", doc)));
+
+        return theExpense;
     }
 
     public Month findAll(String theMonth) {
